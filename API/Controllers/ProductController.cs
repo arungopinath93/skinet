@@ -8,11 +8,12 @@ using Core.Interfaces;
 using Core.Specifications;
 using AutoMapper;
 using API.DTO;
+using API.Errors;
 
 namespace API.Controllers
 {
-    [Route("api/[controller]")]
-    public class ProductController : Controller
+    // [Route("api/[controller]")]
+    public class ProductController : BaseController
     {
         private readonly IGenericRepository<Product> _productRepo;
         private readonly IGenericRepository<ProductBrand> _productBrandRepo;
@@ -48,12 +49,15 @@ namespace API.Controllers
             return Ok(_mapper.Map<IReadOnlyList<Product>,IReadOnlyList<ProductToReturnDto>>(products));
         }
         [HttpGet("{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse),StatusCodes.Status404NotFound)]
         public async Task<ActionResult<ProductToReturnDto>> GetProduct(int id){
             // return Ok(await _productRepository.GetProductByIdAsync(id));
             // return Ok(await _productRepo.GetByIdAsync(id));
             var spec = new ProductsWithTypesAndBrandSpecification(id);
             var result = await _productRepo.GetEntityWithSpec(spec);
 
+            if(result is null) return NotFound(new ApiResponse(404)); 
             return Ok(_mapper.Map<Product,ProductToReturnDto>(result));
         }
         [HttpGet("brands")]
