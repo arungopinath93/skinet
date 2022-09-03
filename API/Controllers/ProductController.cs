@@ -9,7 +9,7 @@ using Core.Specifications;
 using AutoMapper;
 using API.DTO;
 using API.Errors;
-
+using API.Helpers;
 namespace API.Controllers
 {
     // [Route("api/[controller]")]
@@ -28,7 +28,7 @@ namespace API.Controllers
         //     _productRepository = productRepository;
         //     _logger = logger;
         // }
-
+    
         public ProductController(IGenericRepository<Product> productRepo,
         IGenericRepository<ProductBrand> productBrandRepo,
         IGenericRepository<ProductType> productTypeRepo,
@@ -40,13 +40,23 @@ namespace API.Controllers
             _mapper = mapper;
         }
         [HttpGet]
-        public async Task<ActionResult<IReadOnlyList<ProductToReturnDto>>>  GetProducts(){
+        public async Task<ActionResult<Pagination<ProductToReturnDto>>>  GetProducts([FromQuery] ProductSpecParams productParams){
             // var products = await _productRepository.GetProductsAsync();
             // var products = await _productRepo.ListAllAsync();
 
-            var spec = new ProductsWithTypesAndBrandSpecification();
+            var spec = new ProductsWithTypesAndBrandSpecification(productParams);
+
+            var countSpec = new ProductWithFiltersForCountSpecifications(productParams);
+
+            var totalItems  =  await _productRepo.CountAsync(countSpec);
+
             var products = await _productRepo.ListAsync(spec);
-            return Ok(_mapper.Map<IReadOnlyList<Product>,IReadOnlyList<ProductToReturnDto>>(products));
+
+            var data = _mapper
+                        .Map<IReadOnlyList<Product>,IReadOnlyList<ProductToReturnDto>>(products);
+            // return Ok(_mapper.Map<IReadOnlyList<Product>,IReadOnlyList<ProductToReturnDto>>(products));
+            return Ok(new Pagination<ProductToReturnDto>(productParams.PageIndex,productParams.PageSize,
+            totalItems,data));
         }
         [HttpGet("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
