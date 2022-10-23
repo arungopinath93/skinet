@@ -36,7 +36,7 @@ namespace API
             services.AddSwaggerDocumentation();
             services.AddCors( opt => {
                 opt.AddPolicy("CrosPolicy", policy => {
-                    policy.AllowAnyHeader().AllowAnyMethod().WithOrigins("https://localhost:4002");
+                    policy.AllowAnyHeader().AllowAnyMethod().WithOrigins("https://localhost:4200");
                 });
             });
         }
