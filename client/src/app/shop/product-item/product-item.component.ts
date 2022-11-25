@@ -10,7 +10,9 @@ export class ProductItemComponent implements OnInit {
 
   @Input() product : IProduct 
 
-  constructor() { }
+  constructor() { 
+    console.log(this.product);
+  }
 
   ngOnInit(): void {
   }
