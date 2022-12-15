@@ -1,0 +1,15 @@
+<div class="container mt-5">
+    <h4>Internal Server Error - Refreshing the page causes the disappearing of the exceptions</h4>
+    <h5 class="text-danger">{{error.message}}</h5>
+    <p class="font-weight-bold">Note : if you are seeing this then angular is probably not  reponsible</p>
+    <p>What to do next ?</p>
+    <ol>
+        <li>Open chrome dev tools</li>
+        <li>Inspect the ntwork tab</li>
+        <li>Check the failing request</li>
+        <li>Examine the request url - make sure this is correct</li>
+        <li>Reproduce the error in postman - if the same response in postman, then the issue is not with angular</li>
+    </ol>
+    <p>Following is the stack trace - this is where your investigation should start!</p>
+    <code style="margin-top: 5px;background-color: whitesmoke;">{{error.details}}</code>
+</div>
