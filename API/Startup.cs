@@ -10,6 +10,7 @@ using Infrastructure.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using StackExchange.Redis;
 
 namespace API
 {
@@ -34,6 +35,12 @@ namespace API
             services.AddAutoMapper(typeof(MappingProfiles));
             services.AddApplicationServices();
             services.AddSwaggerDocumentation();
+
+            services.AddSingleton<IConnectionMultiplexer ,ConnectionMultiplexer>(c => {
+                var configuration = ConfigurationOptions.Parse(_configuration.GetConnectionString("Redis"),true);
+                return ConnectionMultiplexer.Connect(configuration);
+            });
+            
             services.AddCors( opt => {
                 opt.AddPolicy("CrosPolicy", policy => {
                     policy.AllowAnyHeader().AllowAnyMethod().WithOrigins("https://localhost:4200");
